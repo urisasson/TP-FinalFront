@@ -1,4 +1,4 @@
-import type { Place } from '../utils/types';
+import type { Place } from '../types';
 
 
 export const CATEGORIES = [

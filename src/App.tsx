@@ -1,122 +1,69 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+
+import React, { useState } from 'react';
+import { AppProvider, useApp } from './context/AppContext';
+import { Navbar } from './components/Navbar';
+import { RegisterModal } from './components/RegisterModal';
+import { SearchBar } from './components/SearchBar';
+import { CategoryFilter } from './components/CategoryFilter';
+import { PLACES_DATA } from './data/Places';
+
+const MainContent: React.FC = () => {
+  const { user } = useApp();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('Todas');
+
+  const filteredPlaces = PLACES_DATA.filter((place) => {
+    const matchesCategory = selectedCategory === 'Todas' || place.category === selectedCategory;
+    const matchesNameOnly = place.name.toLowerCase().includes(searchTerm.toLowerCase().trim());
+    return matchesCategory && matchesNameOnly;
+  });
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="min-h-screen bg-gray-100 flex flex-col font-sans text-gray-800">
+      <Navbar />
 
-      <div className="ticks"></div>
+      {!user && <RegisterModal />}
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-6">
+        <div className="mb-6">
+          <h1 className="text-xl font-bold text-gray-800">Buscador de locales en Buenos Aires</h1>
+          <p className="text-xs text-gray-500">Filtrá por nombre de local o categoría.</p>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+        <SearchBar value={searchTerm} onChange={setSearchTerm} />
+        <CategoryFilter
+          selectedCategory={selectedCategory}
+          onSelectCategory={setSelectedCategory}
+        />
+
+        
+        <div className="mt-6 bg-white p-4 rounded-lg border border-gray-200">
+          <h2 className="text-sm font-semibold text-gray-700 mb-3">
+            Resultados encontrados ({filteredPlaces.length}):
+          </h2>
+          {filteredPlaces.length === 0 ? (
+            <p className="text-xs text-gray-500">No hay coincidencias.</p>
+          ) : (
+            <ul className="divide-y divide-gray-100">
+              {filteredPlaces.map((place) => (
+                <li key={place.id} className="py-2 text-xs flex justify-between items-center">
+                  <span className="font-medium text-gray-800">{place.name}</span>
+                  <span className="text-gray-500 bg-gray-100 px-2 py-0.5 rounded">{place.category}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default function App() {
+  return (
+    <AppProvider>
+      <MainContent />
+    </AppProvider>
+  );
 }
-
-export default App
