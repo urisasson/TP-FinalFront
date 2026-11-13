@@ -28,7 +28,6 @@ export const RegisterModal: React.FC = () => {
             <input
               type="text"
               required
-              placeholder="Ej. Juan"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:border-sky-600"
@@ -41,7 +40,6 @@ export const RegisterModal: React.FC = () => {
             <input
               type="text"
               required
-              placeholder="Ej. Pérez"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:border-sky-600"
@@ -54,7 +52,6 @@ export const RegisterModal: React.FC = () => {
             <input
               type="password"
               required
-              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:border-sky-600"
